@@ -1,0 +1,468 @@
+syntax = "proto3";
+
+package lazada;
+
+message Error {
+    string code = 2;
+    string type = 3;
+    string message = 4;
+    string request_id = 5;
+}
+
+enum OrderStatus {
+	unpaid = 0;
+	pending = 1;
+	canceled = 2;
+	ready_to_ship = 3;
+	delivered = 4;
+	returned = 5;
+	shipped = 6;
+	failed = 7;
+}
+
+message ListProductsRequest {
+    string filter = 2; // required, example: live
+    string update_before = 3; // 2018-01-01T00:00:00+0800
+    string search = 4; // product_name
+    string create_before = 5; // 2018-01-01T00:00:00+0800
+    string offset = 6; // 0
+    string create_after = 7; // 2010-01-01T00:00:00+0800
+    string update_after = 8; // 2010-01-01T00:00:00+0800
+    string limit = 9; // 10
+    string options = 10; // 1
+    string sku_seller_list = 11; // ["39817:01:01", "Apple 6S Black"]
+}
+
+message ProductAttributes {
+    string short_description = 2;
+    string name = 3;
+    string description = 4;
+    string warranty_type = 5;
+    string brand = 6;
+}
+
+message SKU {
+    string Status = 2; // active
+    int64 quantity = 3;
+    string product_weight = 4; // 0.03
+    repeated string Images = 5;
+    string SellerSku = 6; // 39817:01:01
+    string ShopSku = 7; // BU565ELAX8AGSGAMZ-1104491
+    string Url = 8; // https://alice.lazada.sg/asd-1083832.html
+    string package_width = 9; // 10.00
+    string special_to_time = 10; // 2020-02-0300:00
+    string special_from_time = 11; // 2015-07-3100:00
+    string package_height = 12; // 4.00
+    float special_price = 13; // 9
+    float price = 14; // 32
+    string package_length = 15; // 10.00
+    string package_weight = 16; // 0.04
+    int64 Available = 17; // 0
+    int64 SkuId = 18; // 314525867
+    string special_to_date = 19; // 2020-02-03
+	string special_time_format = 20; // yyyy-MM-dd HH:mm
+	string color_family = 21; // Màu trắng
+	string size = 22; // Int:L
+	string special_from_date = 23; // 2020-01-29
+}
+
+message Product {
+    int64 primary_category = 2;
+    map<string, string> attributes = 3; // ProductAttributes
+	// ProductAttributes attributes = 3;
+	repeated SKU skus = 4;
+    int64 item_id = 5;
+}
+
+message ListProductsResponse {
+    string code = 2;
+    message Data {
+        int64 total_products = 2; // incorrect, dont trust
+        repeated Product products = 3;
+    }
+    Data data = 3;
+    string request_id = 4;
+}
+
+message ListOrdersRequest {
+    string created_before = 2;
+    string created_after = 3;
+    string status = 4;
+    string update_before = 5;
+    string sort_direction = 6;
+    string offset = 7;
+    string limit = 8;
+    string update_after = 9;
+    string sort_by = 10;
+}
+
+message Order {
+    float voucher_platform = 2;
+    float voucher = 3;
+    int64 order_number = 4;
+    float voucher_seller = 5;
+    string created_at = 6;
+    string voucher_code = 7;
+    bool gift_option = 8;
+    string customer_last_name = 9;
+    string updated_at = 10;
+    string promised_shipping_times = 11;
+    string price = 12;
+    string national_registration_number = 13;
+    string payment_method = 14;
+    string address_updated_at = 15;
+    string customer_first_name = 16;
+    float shipping_fee = 17;
+    string branch_number = 18;
+    string tax_code = 19;
+    int64 items_count = 20;
+    string delivery_info = 21;
+    repeated string statuses = 22;
+
+	message BillingAddress {
+		string country = 2;
+		string address3 = 3;
+		string address2 = 4;
+		string city = 5;
+		string phone = 6;
+		string address1 = 7;
+		string post_code = 8;
+		string phone2 = 9;
+		string last_name = 10;
+		string address5 = 11;
+		string address4 = 12;
+		string first_name = 13;
+	}
+    BillingAddress address_billing = 23;
+
+    string extra_attributes = 24;
+    int64 order_id = 25;
+    string gift_message = 26;
+    string remarks = 27;
+
+	message ShippingAddress {
+		string country = 2;
+		string address3 = 3;
+		string address2 = 4;
+		string city = 5;
+		string phone = 6;
+		string address1 = 7;
+		string post_code = 8;
+		string phone2 = 9;
+		string last_name = 10;
+		string address5 = 11;
+		string address4 = 12;
+		string first_name = 13;
+	}
+    ShippingAddress address_shipping = 28;
+}
+
+message ListOrdersResponse {
+    string code = 2;
+    message Data {
+        int64 count = 2; // dont trust
+        repeated Order orders = 3;
+    }
+    Data data = 3;
+    string request_id = 4;
+}
+
+message GetOrderItemsRequest {
+	int64 order_id = 2;
+}
+
+message OrderItem {
+	string reason = 2;
+	string digital_delivery_info = 3;
+	string promised_shipping_time = 4;
+	int64 order_id = 5;
+	float voucher_amount = 6;
+	string return_status = 7; // int64
+	string shipping_type = 8;
+	string shipment_provider = 9;
+	string variation = 10; // int64
+	string created_at = 11;
+	string invoice_number = 12; // int64
+	float shipping_amount = 13;
+	string currency = 14;
+	string order_flag = 15;
+	string shop_id = 16;
+	string sla_time_stamp = 17;
+	string sku = 18;
+	string voucher_code = 19;
+	string wallet_credits = 20; // float
+	string updated_at = 21;
+	int64 is_digital = 22;
+	string tracking_code_pre = 23;
+	int64 order_item_id = 24;
+	string package_id = 25;
+	string tracking_code = 26;
+	int64 shipping_service_cost = 27;
+	string extra_attributes = 28;
+	float paid_price = 29;
+	string shipping_provider_type = 30;
+	string product_detail_url = 31;
+	string shop_sku = 32;
+	string reason_detail = 33;
+	string purchase_order_id = 34;
+	string purchase_order_number = 35;
+	string name = 36;
+	string product_main_image = 37;
+	float item_price = 38;
+	float tax_amount = 39;
+	string status = 40;
+	string cancel_return_initiator = 41;
+	float voucher_platform = 42;
+	float voucher_seller = 43;
+	string order_type = 44;
+	string stage_pay_status = 45;
+}
+
+message GetOrderItemsResponse {
+    string code = 2;
+    repeated OrderItem data = 3;
+    string request_id = 4;
+}
+
+message GetOrderRequest {
+	string order_id = 2;
+}
+
+message GetOrderResponse {
+	string code = 2;
+	Order data = 3;
+	string request_id = 4;
+}
+
+message Metrics {
+    string code = 2;
+
+    message Data {
+		string main_category_name = 2;
+		int64 seller_id = 3;
+	    string response_rate = 4;
+	    string response_time = 5;
+		string ship_on_time = 6;
+		int64 main_category_id = 7;
+		string positive_seller_rating = 8;
+    }
+    Data data = 3;
+
+    string request_id = 4;
+}
+
+message CreateTokenRequest {
+	string code = 2;
+	string uuid = 3;
+}
+
+message Token {
+	int64 expires_in = 2;
+	string account_id = 3;
+	string country = 4;
+
+	message CountryUserInfo {
+		string country = 2;
+		string seller_id = 3;
+		string user_id = 4;
+		string short_code = 5;
+	}
+	repeated CountryUserInfo country_user_info = 5;
+
+	string account_platform = 6;
+	string access_token = 7;
+	string account = 8;
+    int64 refresh_expires_in = 9;
+	string refresh_token = 10;
+}
+
+message RefreshTokenRequest {
+	string refresh_token = 2;
+}
+
+message GetPayoutRequest {
+    string created_after = 2;
+}
+
+message PayoutStatus {
+	string statement_number = 2;
+	string created_at = 3;
+	string updated_at = 4;
+	string opening_balance = 5;
+	string item_revenue = 6;
+	string shipment_fee = 7;
+	string shipment_fee_credit = 8;
+	string other_revenue_total = 9;
+	string fees_total = 10;
+	string subtotal1 = 11;
+	string refunds = 12;
+	string fees_on_refunds_total = 13;
+	string subtotal2 = 14;
+	string closing_balance = 15;
+	string guarantee_deposit = 16;
+	string payout = 17;
+	string paid = 18;
+}
+
+message GetPayoutResponse {
+    string code = 2;
+    repeated PayoutStatus data = 3;
+    string request_id = 4;
+}
+
+message ListTransactionsRequest {
+	string trans_type = 2;
+	string start_time = 3;
+	string end_time = 4;
+	string limit = 5;
+	string offset = 6;
+}
+
+message Transaction {
+	string details = 2;
+	string seller_sku = 3;
+	string lazada_sku = 4;
+	string amount = 5;
+	string VAT_in_amount = 6;
+	string WHT_amount = 7;
+	string WHT_included_in_amount = 8;
+	string statement = 9;
+	string paid_status = 10;
+	string order_no = 11;
+	string orderItem_no = 12;
+	string orderItem_status = 13;
+	string shipping_provider = 14;
+	string shipping_speed = 15;
+	string shipment_type = 16;
+	string reference = 17;
+	string comment = 18;
+	string payment_ref_id = 19;
+	string fee_name = 20;
+	string transaction_date = 21;
+	string transaction_type = 22;
+	string transaction_number = 23;
+}
+
+message ListTransactionsResponse {
+	string code = 2;
+	repeated Transaction data = 3;
+	string request_id = 4;
+}
+
+message Seller {
+    string name_company = 1;
+    int64 seller_id = 2;
+    string name = 3;
+    string short_code = 4;
+    string logo_url = 5;
+    string email = 6;
+    bool cb = 7;
+    string location = 8;
+}
+
+message GetSellerResponse {
+    string code = 2;
+    Seller data = 3;
+    string request_id = 4;
+}
+
+message GetProductItemRequest {
+	int64 item_id = 2;
+	string seller_sku = 3;
+}
+
+message GetProductItemResponse {
+	string code = 2;
+	Product data = 3;
+	string request_id = 4;
+}
+
+message CreateProductResponse {
+	string code = 2;
+	message SKU {
+		string shop_sku = 1;
+		string seller_sku = 2;
+		int64 sku_id = 3;
+	}
+	message Data {
+		int64 item_id = 1;
+		repeated SKU sku_list = 2;
+	}
+	Data data = 3;
+	string request_id = 4;
+}
+
+// message OrderItem {
+// 	string reason = 1;
+// 	string digital_delivery_info = 2;
+// 	string promised_shipping_time = 3;
+// 	int64 order_id = 4;
+// 	string voucher_amount = 5;
+// 	string return_status = 6;
+// 	string shipping_type = 7;
+// 	string shipment_provider = 8;
+// 	string cancel_return_initiator = 9;
+// 	string variation = 10;
+// 	string created_at = 11;
+// 	string invoice_number = 12;
+// 	string shipping_amount = 13;
+// 	string currency = 14;
+// 	string shop_id = 15;
+// 	string sku = 16;
+// 	string voucher_code = 17;
+// 	string wallet_credits = 18;
+// 	string updated_at = 19;
+// 	int64 is_digital = 20;
+// 	string tracking_code_pre = 21;
+// 	int64 order_item_id = 22;
+// 	string package_id = 23;
+// 	string tracking_code = 24;
+// 	int64 shipping_service_cost = 25;
+// 	string extra_attributes = 26;
+// 	string paid_price = 27;
+// 	string shipping_provider_type = 28;
+// 	string product_detail_url = 29;
+// 	string shop_sku = 30;
+// 	string reason_detail = 31;
+// 	string purchase_order_id = 32;
+// 	string purchase_order_number = 33;
+// 	string name = 34;
+// 	string product_main_image = 35;
+// 	string item_price = 36;
+// 	string tax_amount = 37;
+// 	string status = 38;
+// 	string voucher_platform = 39;
+// 	string voucher_seller = 40;
+// 	string order_type = 41;
+// 	string stage_pay_status = 42;
+// 	string order_flag = 43;
+// 	string sla_time_stamp = 44;
+// 	string warehouse_code = 45;
+// }
+
+message GetMultipleOrderItemsResponse {
+	string code = 2;
+
+	message Data {
+		repeated OrderItem order_items = 1;
+		string order_number = 2;
+		string order_id = 3;
+	}
+	Data data = 3;
+
+	string request_id = 4;
+}
+
+message UpdatePriceQuantityResponse {
+	string code = 2;
+	string type = 3;
+	string message = 4;
+
+	message Detail {
+		string message = 2;
+		string seller_sku = 3;
+	}
+	repeated Detail detail = 5;
+
+	string request_id = 6;
+}
