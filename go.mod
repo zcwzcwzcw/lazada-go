@@ -1,4 +1,4 @@
-module github.com/4vn/lazada-go
+module github.com/zcwzcwzcw/lazada-go
 
 go 1.14
 
